@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>¡Mis 3 Años!</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script defer src="script.js"></script>
+  <link rel="icon" href="assets/bee-icon.png" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="welcome-screen" id="welcome-screen">
+    <div class="welcome-content">
+      <h1>MIS 3 AÑITOS</h1>
+      <h1>YANAY</h1>
+      <button id="enter-button">INGRESAR</button>
+    </div>
+  </div>
+
+  <main id="main-content" class="hidden">
+    <section class="photo-section fade-in">
+      <img src="assets/cumpleanera.jpg" alt="Foto" class="photo" />
+    </section>
+
+    <section class="countdown-section fade-in">
+      <div class="icon">⏰</div>
+      <h2 class="count-title">¡Falta para mi cumple!</h2>
+      <div id="countdown" class="countdown-container"></div>
+    </section>
+
+    
+    <section class="invite-section fade-in">
+      <div class="icon">🍰</div>
+      <h2>¡Te invito a festejar mis 3 añitos!</h2>
+    </section>
+
+    <section class="datetime-section fade-in">
+      <div class="icon">🗓️</div>
+      <h2>Fecha y Hora</h2>
+      <p>Viernes 1 de Agosto de 2025 - 17:00 hs</p>
+    </section>
+
+    <section class="location-section fade-in">
+      <div class="icon">📌</div>
+      <h2>Salón Abejitas Felices</h2>
+      <p>Calle de las Flores 123</p>
+      <button>Ver en el mapa</button>
+    </section>
+
+    <section class="confirmation-section fade-in">
+      <div class="icon">📞</div>
+      <h2>Confirmá tu asistencia</h2>
+      <button>Confirmar por WhatsApp</button>
+    </section>
+  </main>
+
+  <audio id="bg-music" loop>
+    <source src="assets/musica.mp3" type="audio/mpeg" />
+  </audio>
+
+  <div id="music-container" class="hidden"><button id="music-toggle" class="music-button"><span id="music-icon">▶️</span></button></div>
+</body>
+</html>
