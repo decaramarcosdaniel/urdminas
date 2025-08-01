@@ -1,42 +1,73 @@
+const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSSLgGNN4yJJhCNSFpAgYDyd_jfY6dK7RA0VVhtz73qb18kHh0Cs16T-XOlrUYDcLsf_JJdYlYJWg-q/pub?gid=0&single=true&output=csv';
 
-document.getElementById('enter-button').addEventListener('click', () => {
-  document.getElementById('welcome-screen').style.display = 'none';
-  document.getElementById('main-content').classList.remove('hidden');
-  document.getElementById('bg-music').play();
-  document.getElementById('music-container').classList.remove('hidden');
-  document.getElementById('music-icon').textContent = '⏸️';
-});
+const input = document.getElementById("documento");
+const consultarBtn = document.getElementById("consultarBtn");
+const limpiarBtn = document.getElementById("limpiarBtn");
+const resultado = document.getElementById("resultado");
 
-document.getElementById('music-toggle').addEventListener('click', () => {
-  const music = document.getElementById('bg-music');
-  const icon = document.getElementById('music-icon');
-  if (music.paused) {
-    music.play();
-    icon.textContent = '⏸️';
-  } else {
-    music.pause();
-    icon.textContent = '▶️';
+consultarBtn.addEventListener("click", async () => {
+  const doc = input.value.trim();
+  resultado.innerHTML = "<p>Buscando datos...</p>";
+
+  try {
+    const res = await fetch(sheetURL);
+    const text = await res.text();
+    const rows = text.trim().split("\n").map(r => r.split(","));
+    const headers = rows[0].map(h => h.trim());
+    const fila = rows.find(r => r[0] === doc);
+
+    if (!fila) {
+      resultado.innerHTML = "<p style='text-align:center;'>No se encontró información.</p>";
+      return;
+    }
+
+    const datos = Object.fromEntries(headers.map((h, i) => [h, (fila[i] || "").trim()]));
+
+    const estadoChalecoColor = datos.Estado_Chaleco?.toLowerCase() === "vigente" ? "green" : "red";
+    const estadoLicColor = datos.Estado_Lic?.toLowerCase() === "vigente" ? "green" : "red";
+
+    resultado.innerHTML = `
+      <div class="card">
+        <h3>DATOS GENERALES</h3>
+        <p><strong>Jerarquía:</strong> ${datos.Jerarquía || '-'}</p>
+        <p><strong>Nombre y Apellido:</strong> ${datos.Nombre_Apellido || '-'}</p>
+        <p><strong>Dependencia:</strong> ${datos.Dependencia || '-'}</p>
+      </div>
+
+      <div class="card">
+        <h3>ARMAMENTO</h3>
+        <p><strong>Marca:</strong> ${datos.Marca_Arma || '-'}</p>
+        <p><strong>Modelo:</strong> ${datos.Modelo_Arma || '-'}</p>
+        <p><strong>Serie:</strong> ${datos.Serie_Arma || '-'}</p>
+        <p><strong>Calibre:</strong> ${datos.Calibre_Arma || '-'}</p>
+        <p><strong>Cargadores:</strong> ${datos.Cargadores || '-'}</p>
+      </div>
+
+      <div class="card">
+        <h3>CHALECO PROVISTO</h3>
+        <p><strong>Marca:</strong> ${datos.Marca_Chaleco || '-'}</p>
+        <p><strong>Modelo:</strong> ${datos.Modelo_Chaleco || '-'}</p>
+        <p><strong>Serie:</strong> ${datos.Serie_Chaleco || '-'}</p>
+        <p><strong>Vencimiento:</strong> ${datos.Venc_Chaleco || '-'}</p>
+        <p><strong>Estado:</strong> <span style="color:${estadoChalecoColor}; font-weight: bold;">${datos.Estado_Chaleco || '-'}</span></p>
+      </div>
+
+      <div class="card">
+        <h3>LICENCIA DE CONDUCIR</h3>
+        <p><strong>Categoría:</strong> ${datos.Categoria_Lic || '-'}</p>
+        <p><strong>Municipio:</strong> ${datos.Municipio_Lic || '-'}</p>
+        <p><strong>Otorgamiento:</strong> ${datos.Otorgamiento_Lic || '-'}</p>
+        <p><strong>Vencimiento:</strong> ${datos.Vencimiento_Lic || '-'}</p>
+        <p><strong>Estado:</strong> <span style="color:${estadoLicColor}; font-weight: bold;">${datos.Estado_Lic || '-'}</span></p>
+      </div>
+    `;
+  } catch (error) {
+    resultado.innerHTML = "<p style='text-align:center;color:red;'>Error al consultar datos.</p>";
+    console.error(error);
   }
 });
 
-// Contador regresivo
-function updateCountdown() {
-  const countdown = document.getElementById("countdown");
-  const targetDate = new Date("2025-08-01T17:00:00").getTime();
-  const now = new Date().getTime();
-  const distance = targetDate - now;
-
-  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-  countdown.innerHTML = `
-    <div>${days}<span class="label">DÍAS</span></div>
-    <div>${hours}<span class="label">HORAS</span></div>
-    <div>${minutes}<span class="label">MINUTOS</span></div>
-    <div>${seconds}<span class="label">SEGUNDOS</span></div>
-  `;
-}
-setInterval(updateCountdown, 1000);
-updateCountdown();
+limpiarBtn.addEventListener("click", () => {
+  input.value = "";
+  resultado.innerHTML = "";
+});
